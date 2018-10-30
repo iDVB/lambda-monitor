@@ -15,7 +15,7 @@ provider:
   timeout: 300
   versionFunctions: false
   environment:
-    STAGE: ${opt:stage}
+    STAGE_TARGET: ${opt:stage}
     REGION: ${opt:region}
     <<<:
       - ${file(./config/${opt:stage}.yml)}

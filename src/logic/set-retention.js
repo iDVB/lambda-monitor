@@ -11,7 +11,7 @@ module.exports = cfnResponse.wrap((event, context, callback, rb) =>
       TagFilters: [
         {
           Key: 'STAGE',
-          Values: [process.env.STAGE],
+          Values: [process.env.STAGE_TARGET],
         },
       ],
     })
