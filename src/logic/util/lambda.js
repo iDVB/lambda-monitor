@@ -70,7 +70,6 @@ module.exports = options => {
       .promise();
 
   const subscribeCloudWatchLogGroup = (monitor, producer) => {
-    console.log('subscribeCloudWatchLogGroup', monitor, producer);
     return cloudwatchlogs
       .putSubscriptionFilter({
         destinationArn: monitor.FunctionARN,
@@ -89,11 +88,9 @@ module.exports = options => {
       })
       .promise()
       .then(data => {
-        console.log('DEBUG: isLogGroup', loggroupprefix(f));
         return true;
       })
       .catch(err => {
-        console.log('ERROR: isLogGroup', loggroupprefix(f));
         return false;
       });
 
