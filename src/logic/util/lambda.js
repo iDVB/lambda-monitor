@@ -1,6 +1,4 @@
 const AWS = require('aws-sdk');
-var Promise = require('bluebird');
-AWS.config.setPromisesDependency(Promise);
 
 module.exports = options => {
   const resources = new AWS.ResourceGroupsTaggingAPI(options);
@@ -75,7 +73,7 @@ module.exports = options => {
         destinationArn: monitor.FunctionARN,
         filterName: 'NoneFilter',
         filterPattern: '',
-        logGroupName: `/aws/lambda/${producer.FunctionName}`,
+        logGroupName: loggroupprefix(producer),
       })
       .promise();
   };

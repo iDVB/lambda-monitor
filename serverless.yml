@@ -1,24 +1,16 @@
 service: lambda-monitor
 
-package:
-  include:
-    - src/**
-  exclude:
-    - "*"
+custom:
+  vars: ${file(./config/vars.yml):${opt:stage, self:provider.stage}, file(./config/vars.yml):dev}
 
 provider:
   name: aws
-  runtime: nodejs8.10
-  stage: ${opt:stage}
-  region: ${opt:region}
+  region: us-east-1
+  runtime: nodejs8.10ß
   memorySize: 256
   timeout: 300
   versionFunctions: false
-  environment:
-    STAGE_TARGET: ${opt:stage}
-    REGION: ${opt:region}
-    <<<:
-      - ${file(./config/${opt:stage}.yml)}
+  environment: ${self:custom.vars.ENVIRONMENT}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -100,8 +92,8 @@ resources:
       Type: AWS::Lambda::Permission
       Properties:
         Action: lambda:InvokeFunction
-        FunctionName: ${self:service}-${opt:stage}-process-logs
-        Principal: logs.${opt:region}.amazonaws.com
+        FunctionName: ${self:custom.vars.STACKNAME}-process-logs
+        Principal: logs.${self:provider.region}.amazonaws.com
       DependsOn:
         - ProcessDashlogsLambdaFunction
 
@@ -189,6 +181,14 @@ resources:
       Properties:
         S3BucketName:
           Ref: CloudTrailBucket
-        IsLogging: ${file(./config/${opt:stage}.yml):ENABLE_CLOUD_TRAIL_LOGGING}
+        IsLogging:  ${self:custom.vars.ENVIRONMENT.ENABLE_CLOUD_TRAIL_LOGGING}
       DependsOn:
         - CloudTrailBucketPolicy
+
+package:
+  exclude:
+    - "**/*"
+    - "!node_modules/**"
+  include:
+    - src/**
+
